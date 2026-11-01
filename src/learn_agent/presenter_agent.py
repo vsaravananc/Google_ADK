@@ -53,8 +53,127 @@ Your job:
 
 A2UI rules you MUST follow:
 {a2ui_prompt}
+CRITICAL RULE: Inside `<a2ui-json>...</a2ui-json>`, you MUST output a JSON ARRAY `[...]` of 3 separate objects (`surfaceUpdate`, `dataModelUpdate`, `beginRendering`). NEVER combine them into a single JSON object.
 
-Output ONLY the A2UI JSON — no extra prose outside the JSON structure.
+Follow this EXACT structure inside `<a2ui-json>`:
+<a2ui-json>
+[
+  {{
+    "surfaceUpdate": {{
+      "surfaceId": "car_search_results",
+      "components": [
+        {{
+          "id": "root_column",
+          "component": {{
+            "Column": {{
+              "children": {{ "explicitList": ["heading", "car_list"] }}
+            }}
+          }}
+        }},
+        {{
+          "id": "heading",
+          "component": {{
+            "Text": {{
+              "text": {{ "literalString": "Matching Cars Found" }},
+              "usageHint": "h2"
+            }}
+          }}
+        }},
+        {{
+          "id": "car_list",
+          "component": {{
+            "List": {{
+              "direction": "vertical",
+              "children": {{
+                "template": {{
+                  "componentId": "car_card",
+                  "dataBinding": "/cars"
+                }}
+              }}
+            }}
+          }}
+        }},
+        {{
+          "id": "car_card",
+          "component": {{
+            "Card": {{ "child": "card_content" }}
+          }}
+        }},
+        {{
+          "id": "card_content",
+          "component": {{
+            "Column": {{
+              "children": {{
+                "explicitList": ["c_name", "c_brand", "c_price", "c_year", "c_fuel", "c_trans"]
+              }}
+            }}
+          }}
+        }},
+        {{
+          "id": "c_name",
+          "component": {{ "Text": {{ "text": {{ "path": "carName" }}, "usageHint": "h3" }} }}
+        }},
+        {{
+          "id": "c_brand",
+          "component": {{ "Text": {{ "text": {{ "path": "brand" }}, "usageHint": "body" }} }}
+        }},
+        {{
+          "id": "c_price",
+          "component": {{ "Text": {{ "text": {{ "path": "price" }}, "usageHint": "body" }} }}
+        }},
+        {{
+          "id": "c_year",
+          "component": {{ "Text": {{ "text": {{ "path": "year" }}, "usageHint": "body" }} }}
+        }},
+        {{
+          "id": "c_fuel",
+          "component": {{ "Text": {{ "text": {{ "path": "fuel" }}, "usageHint": "body" }} }}
+        }},
+        {{
+          "id": "c_trans",
+          "component": {{ "Text": {{ "text": {{ "path": "transmission" }}, "usageHint": "body" }} }}
+        }}
+      ]
+    }}
+  }},
+  {{
+    "dataModelUpdate": {{
+      "surfaceId": "car_search_results",
+      "contents": [
+        {{
+          "key": "cars",
+          "valueMap": [
+            {{
+              "key": "car1",
+              "valueMap": [
+                {{ "key": "carName", "valueString": "Tata Nexon" }},
+                {{ "key": "brand", "valueString": "Tata" }},
+                {{ "key": "price", "valueString": "₹3,25,000" }},
+                {{ "key": "year", "valueString": "2015" }},
+                {{ "key": "fuel", "valueString": "Petrol" }},
+                {{ "key": "transmission", "valueString": "DCT" }}
+              ]
+            }}
+          ]
+        }}
+      ]
+    }}
+  }},
+  {{
+    "beginRendering": {{
+      "surfaceId": "car_search_results",
+      "root": "root_column"
+    }}
+  }}
+]
+</a2ui-json>
+
+Output ONLY the `<a2ui-json>...</a2ui-json>` block.
+
+CRITICAL: When CarPresenterAgent returns an <a2ui-json>...</a2ui-json> block,
+your response MUST contain ONLY the raw <a2ui-json>...</a2ui-json> block verbatim.
+Do NOT add any greeting, intro sentence, or explanation before or after <a2ui-json>.
+
 """,
     tools=[],  # no tools needed – this agent only formats data
 )
