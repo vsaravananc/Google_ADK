@@ -10,3 +10,4 @@ wheels/
 .venv
 src/learn_agent/.adk
 src/learn_agent/.env
+learn_agent/*
